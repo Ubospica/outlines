@@ -90,6 +90,7 @@ def cache(expire: Optional[float] = None, typed=False, ignore=()):
     """
 
     def decorator(cached_function: Callable):
+        return cached_function
         memory = get_cache()
 
         base = (full_name(cached_function),)

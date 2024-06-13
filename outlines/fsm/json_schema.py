@@ -237,8 +237,12 @@ def to_regex(
 
     elif "const" in instance:
         const = instance["const"]
-        if type(const) in [int, float, bool, None]:
+        if type(const) in [int, float]:
             const = re.escape(str(const))
+        elif type(const) == bool:
+            const = str(const).lower()
+        elif type(const) == None:
+            const = "null"
         elif type(const) == str:
             const = f'"{re.escape(const)}"'
         return const

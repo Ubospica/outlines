@@ -210,6 +210,8 @@ class SequenceGenerator:
                     generated_token_ids = self.get_generated_token_ids(
                         prompt_token_ids, token_ids
                     )
+                    print("Tokens:", generated_token_ids[0][-1], self.tokenizer.decode(generated_token_ids))
+
                     if max_tokens and len(generated_token_ids[0]) >= max_tokens:
                         break
                     if stop_sequences and self.is_stop_sequence_found(

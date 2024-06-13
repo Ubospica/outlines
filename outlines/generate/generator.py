@@ -1,5 +1,6 @@
 import dataclasses
 import math
+import time
 from typing import TYPE_CHECKING, Callable, Iterable, Iterator, List, Optional, Tuple
 
 if TYPE_CHECKING:
@@ -77,21 +78,32 @@ def sequence_generator(
                 "The input length exceeds the context length of the model."
             )
 
+        start = time.process_time_ns()
         allowed_tokens = get_allowed_tokens(fsms, fsm_states)
+        mid = time.process_time_ns()
         biased_logits = bias_logits(logits, allowed_tokens)
+        end = time.process_time_ns()
+        print("Find token time:", (mid - start) / 1e3,
+              "Bias time:", (end - mid) / 1e3,
+              "num tokens:", sum([len(x) for x in allowed_tokens]))
         next_token_ids, ancestors, sequence_weights = sampler(
             biased_logits, sequence_weights, rng
         )
+        print("Predicted:", next_token_ids)
 
         token_ids = update_token_ids(token_ids, next_token_ids, ancestors)
         attention_masks = update_attention_masks(attention_masks, ancestors)
         kv_cache = reorder_kv_cache(kv_cache, ancestors)
+
+        start = time.process_time_ns()
         if len(ancestors) > 1:
             fsms = reorder_fsms(fsms, ancestors)
             fsm_states = reorder_fsm_states(fsm_states, ancestors)
 
         fsm_states = get_next_fsm_states(fsms, fsm_states, next_token_ids)
         is_finished = is_generation_finished(fsms, fsm_states)
+        end = time.process_time_ns()
+        print("Update time:", (end - start) / 1e3)
 
         if is_finished:
             yield GenerationState(

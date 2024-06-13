@@ -91,12 +91,17 @@ class TransformerTokenizer(Tokenizer):
     def convert_token_to_string(self, token: str) -> str:
         from transformers.file_utils import SPIECE_UNDERLINE
 
+        # print("old token:", token)
+
         string = self.tokenizer.convert_tokens_to_string([token])
 
         if self.is_llama:
             # A hack to handle missing spaces to HF's Llama tokenizers
             if token.startswith(SPIECE_UNDERLINE) or token == "<0x20>":
+                # print("new string:", " " + string)
                 return " " + string
+
+        # print("new string:", string)
 
         return string
 

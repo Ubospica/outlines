@@ -740,11 +740,11 @@ def create_fsm_index_end_to_end(
     seen: Set[int] = set()
     next_states = {fsm_info.initial}
 
-    pbar = tqdm(
-        total=len(set(fsm_info.transitions.values()))
-        + 1,  # all transitions plus initial
-        desc="Compiling FSM index for all state transitions",
-    )
+    # pbar = tqdm(
+    #     total=len(set(fsm_info.transitions.values()))
+    #     + 1,  # all transitions plus initial
+    #     desc="Compiling FSM index for all state transitions",
+    # )
 
     vocabulary_transition_keys = get_vocabulary_transition_keys(
         fsm_info.alphabet_symbol_mapping,
@@ -775,10 +775,10 @@ def create_fsm_index_end_to_end(
                 next_states.add(end_state)
 
         if start_state not in seen:
-            pbar.update(1)
+            # pbar.update(1)
             seen.add(start_state)
 
-    pbar.close()
+    # pbar.close()
 
     return states_to_token_subsets
 
@@ -875,6 +875,8 @@ def reduced_vocabulary(
     for token_str, token_ids in vocabulary.items():
         token_ids_np = np.fromiter(token_ids, dtype=np.dtype("int64"))
         vocabulary_nb.append((token_str, token_ids_np))
+
+    # print(empty_token_ids)
 
     return vocabulary_nb, empty_token_ids
 
